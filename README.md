@@ -5,9 +5,11 @@
   <a href="https://outerlumen.com/mfer/blaster/">https://outerlumen.com/mfer/blaster</a>
 </h4>
 
-This is a fork of a multiplayer (.io) web game. <br />Read the original walkthrough: [**How to Build a Multiplayer (.io) Web Game**](https://victorzhou.com/blog/build-an-io-game-part-1/). THANK YOU to mfer Victor Zhou for the awesome tutorial.
+This is a fork of a multiplayer (.io) web game.
 
-Built with [Node.js](https://nodejs.org/), [socket.io](https://socket.io/), and [HTML5 Canvas](https://www.w3schools.com/html/html5_canvas.asp).
+Read the original walkthrough: [**How to Build a Multiplayer (.io) Web Game**](https://victorzhou.com/blog/build-an-io-game-part-1/). THANK YOU to Victor Zhou for the awesome tutorial!
+
+Built with [Node.js](https://nodejs.org/), [socket.io](https://socket.io/), and [HTML5 Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API).
 
 ## Development
 
