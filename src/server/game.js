@@ -13,6 +13,7 @@ class Game {
     this.bullets = [];
     this.lastUpdateTime = Date.now();
     this.shouldSendUpdate = false;
+    this.messages = [];
     setInterval(this.update.bind(this), 1000 / 60);
   }
 
@@ -21,7 +22,10 @@ class Game {
 
     const x = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);
     const y = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);
+
     this.players[socket.id] = new Player(socket.id, user, x, y);
+
+    this.messages.push(`${user.name} enters the chat`);
   }
 
   removePlayer(socket) {
@@ -57,6 +61,7 @@ class Game {
       const newBullet = player.update(dt);
       if (newBullet) {
         this.bullets.push(newBullet);
+        //this.messages.push(`${player.user.name} fires ${Math.random()}`);
       }
     });
 
@@ -73,17 +78,22 @@ class Game {
         
         if (player.color === "dead") {
           // game over - removed from game
-          socket.emit(Constants.MSG_TYPES.GAME_OVER, );
+          socket.emit(Constants.MSG_TYPES.GAME_OVER);
           this.removePlayer(socket);
         }
         else {
           // mfer is now dead!
           const killer_bullet = destroyedBullets.find(d => d.hitId === player.id)
-          this.players[killer_bullet.bullet.parentID]?.onDealtDamage();
+          
+          const killer = this.players[killer_bullet.bullet.parentID];
 
-          // mfer gets killer's username to display back to them on game over
-          player.tokenId = this.players[killer_bullet.bullet.parentID]?.username;
-          player.hp = Constants.AFTER_DEATH_COUNTDOWN;     // hp is punked for after-death sequence countdown
+          // award player kill score
+          killer?.onDealtDamage();
+
+          this.messages.push(`${player.user.name} blasted by ${killer?.user.name}`);
+
+          // hp is punked for after-death sequence countdown
+          player.hp = Constants.AFTER_DEATH_COUNTDOWN;
           player.color = "dead";
         }
       }
@@ -105,15 +115,10 @@ class Game {
     // Check if we need another AidKit
     if (this.aidkits.length < max_aid_kits) {
 
-      // even distribution
-      const x = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);//0;//Math.random()*Constants.MAP_SIZE;
-      const y = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);//Math.random()*Constants.MAP_SIZE;
+      const x = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);
+      const y = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);
 
-      // near centre
-      // const x = 0.5*Constants.MAP_SIZE + Math.random()*1000;
-      // const y = 0.5*Constants.MAP_SIZE + Math.random()*1000;
-
-      const hp = Constants.PLAYER_MAX_HP;//parseInt(Constants.PLAYER_MAX_HP*(1 - 0.75*Math.random()));
+      const hp = Constants.PLAYER_MAX_HP;
       const t0 = now + 2000*(Math.random() + 5*Math.random());
       this.aidkits.push(new AidKit(x, y, hp, t0));
     }
@@ -129,8 +134,16 @@ class Game {
       Object.keys(this.sockets).forEach(playerID => {
         const socket = this.sockets[playerID];
         const player = this.players[playerID];
-        socket.emit(Constants.MSG_TYPES.GAME_UPDATE, this.createUpdate(player, leaderboard));
+        socket.emit(
+          Constants.MSG_TYPES.GAME_UPDATE, 
+          this.createUpdate(
+            player, 
+            leaderboard, 
+            this.messages
+          )
+        );
       });
+      this.messages = []; // messages sent!
       this.shouldSendUpdate = false;
     } else {
       this.shouldSendUpdate = true;
@@ -141,10 +154,10 @@ class Game {
     return Object.values(this.players)
       .sort((p1, p2) => p2.score - p1.score)
       .slice(0, 5)
-      .map(p => ({ username: p.username, score: Math.round(p.score) }));
+      .map(p => ({ name: p.user.name, score: Math.round(p.score) }));
   }
 
-  createUpdate(player, leaderboard) {
+  createUpdate(player, leaderboard, messages) {
     const nearbyPlayers = Object.values(this.players).filter(
       p => p !== player && p.distanceTo(player) <= 0.5*Constants.MAP_SIZE,
     );
@@ -163,6 +176,8 @@ class Game {
       bullets: nearbyBullets.map(b => b.serializeForUpdate()),
       aidkits: nearbyAidKits.map(a => a.serializeForUpdate()),
       leaderboard,
+      messages: messages,
+      playercount:Object.values(this.players).length
     };
   }
 }

@@ -9,12 +9,13 @@ const mferTraits = JSON.parse(rawData.toString());
 class Player extends ObjectClass {
   constructor(id, user, x, y) {
     super(id, x, y, Math.random() * 2 * Math.PI, Constants.PLAYER_SPEED);
-    this.username = user.name;
-    this.tokenId = user.tokenId;
+    // this.username = user.name;
+    // this.tokenId = user.tokenId;
+    this.user = user;
     this.hp = Constants.PLAYER_MAX_HP;
     this.fireCooldown = 0;
     this.score = 0;
-    this.color = mferTraits[this.tokenId]?.attributes.find(t => t.trait_type === 'background')?.value || 'white';
+    this.color = mferTraits[this.user?.tokenId]?.attributes.find(t => t.trait_type === 'background')?.value || 'white';
   }
 
   // Returns a newly created bullet, or null.
@@ -57,7 +58,7 @@ class Player extends ObjectClass {
       ...(super.serializeForUpdate()),
       direction: this.direction,
       hp: this.hp,
-      tokenId:this.tokenId,
+      user:this.user,
       color:this.color
     };
   }

@@ -1,6 +1,7 @@
 // Learn more about this file at:
 // https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state
 import { updateLeaderboard } from './leaderboard';
+import { updateMessages } from './messages';
 
 // The "current" state will always be RENDER_DELAY ms behind server time.
 // This makes gameplay smoother and lag less noticeable.
@@ -21,8 +22,9 @@ export function processGameUpdate(update) {
     gameStart = Date.now();
   }
   gameUpdates.push(update);
-
-  updateLeaderboard(update.leaderboard);
+  
+  updateLeaderboard(update.leaderboard,update.playercount);
+  updateMessages(update.messages)
 
   // Keep only one game update before the current server time
   const base = getBaseUpdate();
@@ -80,7 +82,7 @@ function interpolateObject(object1, object2, ratio) {
 
   const interpolated = {};
   Object.keys(object1).forEach(key => {
-    if (key === "tokenId" || key === "color" || key === "isDead") {interpolated[key] = object1[key];}
+    if (key === "user" || key === "color") {interpolated[key] = object1[key];}
     else if (key === 'direction') {
       interpolated[key] = interpolateDirection(object1[key], object2[key], ratio);
     } else {

@@ -7,6 +7,8 @@ const Constants = require('../shared/constants');
 const Game = require('./game');
 const webpackConfig = require('../../webpack.dev.js');
 
+const log = require('./logging');
+
 // Setup an Express server
 const app = express();
 // app.use(express.static('public'));
@@ -42,8 +44,12 @@ io.on('connection', socket => {
 // Setup the Game
 const game = new Game();
 
-function joinGame(username) {
-  game.addPlayer(this, username);
+function joinGame(user) {
+  // max name length
+  user.name = user.name.slice(0, 15);
+  log(user.name);
+  
+  game.addPlayer(this, user);
 }
 
 function handleInput(dir) {

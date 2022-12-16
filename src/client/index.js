@@ -6,6 +6,7 @@ import { startCapturingInput, stopCapturingInput } from './input';
 import { downloadAssets } from './assets';
 import { initState } from './state';
 import { setLeaderboardHidden } from './leaderboard';
+import { setMessageboxHidden } from './messages';
 
 // I'm using a tiny subset of Bootstrap here for convenience - there's some wasted CSS,
 // but not much. In general, you should be careful using Bootstrap because it makes it
@@ -44,6 +45,7 @@ Promise.all([
     startCapturingInput();
     startRendering();
     setLeaderboardHidden(false);
+    setMessageboxHidden(false);
   };
 }).catch(console.error);
 
@@ -52,4 +54,5 @@ function onGameOver() {
   stopRendering();
   playMenu.classList.remove('hidden');
   setLeaderboardHidden(true);
+  setMessageboxHidden(true);
 }
