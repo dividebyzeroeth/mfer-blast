@@ -84,7 +84,15 @@ button:focus {
   background-color: rgba(255, 255, 255, 0.5);
   padding: 10px;
   border-radius: 5px;
+/*  color:white;*/
 }
+
+/*#leaderboard hr {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  margin: 1rem 0;
+  width: 100%;
+}*/
 
 #leaderboard th {
   padding: 2px 5px;
@@ -110,6 +118,20 @@ table {
 }
 #leaderboard td:nth-child(1) {
   text-align: left;
+}
+
+#playercount {
+  margin-top:4px;
+}
+
+#messagebox {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+/*  color:white;*/
 }
 
 #disconnect-modal {
@@ -170,6 +192,10 @@ table {
   }
 
   #leaderboard table {
+    font-size: 14px;
+  }
+
+  #messagebox {
     font-size: 14px;
   }
 }

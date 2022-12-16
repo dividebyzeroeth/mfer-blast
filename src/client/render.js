@@ -23,7 +23,7 @@ let dim = {};
 
 // Get the canvas graphics context
 const canvas = document.getElementById('game-canvas');
-const context = canvas.getContext('2d');
+const context = canvas.getContext('2d', { alpha: false }); // turn off alpha to optimize
 setCanvasDimensions();
 
 function setCanvasDimensions() {
@@ -58,7 +58,7 @@ window.addEventListener('resize', debounce(40, setCanvasDimensions));
 let animationFrameRequestId;
 
 function render() {
-  const { me, others, bullets, aidkits } = getCurrentState();
+  const { me, others, bullets, aidkits, messages } = getCurrentState();
 
   if (me) {
     // Draw background
@@ -68,12 +68,6 @@ function render() {
     context.strokeStyle = 'black';
     context.lineWidth = 5;
     context.strokeRect(0.5*dim.sw - me.x, 0.5*dim.sh - me.y, MAP_SIZE, MAP_SIZE);
-
-   if (me.color === 'dead') {
-      context.fillStyle = 'white';
-      context.font = "30px sans-serif";
-      context.fillText(`blasted by ${me.tokenId}`, 10, 50);
-    }
 
     // Draw all bullets
     bullets.forEach(renderBullet.bind(null, me));
@@ -91,15 +85,15 @@ function render() {
 }
 
 function renderBackground(x, y) {
-  const backgroundX = MAP_SIZE / 2 - x + 0.5*dim.sw;
-  const backgroundY = MAP_SIZE / 2 - y + 0.5*dim.sh;
+  const backgroundX = 0.5*MAP_SIZE - x + 0.33*dim.sw;
+  const backgroundY = 0.5*MAP_SIZE - y + 0.33*dim.sh;
   const backgroundGradient = context.createRadialGradient(
     backgroundX,
     backgroundY,
-    MAP_SIZE / 10,
+    0.1*MAP_SIZE,
     backgroundX,
     backgroundY,
-    MAP_SIZE / 2,
+    0.5*MAP_SIZE,
   );
   backgroundGradient.addColorStop(0, '#ea3e33'); // center
   backgroundGradient.addColorStop(1, '#6189f7');
@@ -109,7 +103,7 @@ function renderBackground(x, y) {
 
 // Renders a ship at the given coordinates
 function renderPlayer(me, player) {
-  const { x, y, tokenId, color, direction } = player;
+  const { x, y, user, color, direction } = player;
   
   if (color === 'dead') return;
 
@@ -129,7 +123,7 @@ function renderPlayer(me, player) {
   context.stroke();
   context.clip();
     
-  const img = getmfer(tokenId);
+  const img = getmfer(user.tokenId);
 
   if (img['loaded']) {
     context.drawImage(
@@ -147,17 +141,27 @@ function renderPlayer(me, player) {
   context.fillStyle = 'white';
   context.fillRect(
     canvasX - PLAYER_RADIUS,
-    canvasY + PLAYER_RADIUS + 8,
+    canvasY + PLAYER_RADIUS + 6,
     PLAYER_RADIUS * 2,
     4,
   );
   context.fillStyle = 'black';
   context.fillRect(
     canvasX - PLAYER_RADIUS + PLAYER_RADIUS * 2 * player.hp / PLAYER_MAX_HP,
-    canvasY + PLAYER_RADIUS + 8,
+    canvasY + PLAYER_RADIUS + 6,
     PLAYER_RADIUS * 2 * (1 - player.hp / PLAYER_MAX_HP),
     4,
   );
+
+  // draw name
+  context.fillStyle = 'white';
+  context.font = "9px sans-serif";
+  context.fillText(
+    `${me.user.name}`, 
+    canvasX - PLAYER_RADIUS, 
+    canvasY + PLAYER_RADIUS + 19
+  );
+
 }
 
 function renderBullet(me, bullet) {
