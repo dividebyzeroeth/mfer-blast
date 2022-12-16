@@ -25,7 +25,7 @@ class Game {
 
     this.players[socket.id] = new Player(socket.id, user, x, y);
 
-    this.messages.push(`${user.name} enters the chat`);
+    // this.messages.push(`${user.name} enters the chat`);
   }
 
   removePlayer(socket) {
