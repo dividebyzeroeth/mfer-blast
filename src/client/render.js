@@ -157,7 +157,7 @@ function renderPlayer(me, player) {
   context.fillStyle = 'white';
   context.font = "9px sans-serif";
   context.fillText(
-    `${me.user.name}`, 
+    `${player.user.name}`, 
     canvasX - PLAYER_RADIUS, 
     canvasY + PLAYER_RADIUS + 19
   );
