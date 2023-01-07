@@ -8,7 +8,7 @@ module.exports = Object.freeze({
   BULLET_SPEED: 800,
   BULLET_DAMAGE: 2,
 
-  AID_KIT_RADIUS: 40,
+  AID_KIT_WIDTH: 40,
 
   AFTER_DEATH_COUNTDOWN: 200,
 

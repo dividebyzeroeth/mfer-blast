@@ -20,8 +20,8 @@ class Game {
   addPlayer(socket, user) {
     this.sockets[socket.id] = socket;
 
-    const x = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);
-    const y = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);
+    const x = Math.random()*(Constants.MAP_SIZE-Constants.PLAYER_RADIUS);
+    const y = Math.random()*(Constants.MAP_SIZE-Constants.PLAYER_RADIUS);
 
     this.players[socket.id] = new Player(socket.id, user, x, y);
 
@@ -67,7 +67,13 @@ class Game {
 
     // Apply collisions, give players score for hitting bullets
     const destroyedBullets = applyBullets(Object.values(this.players), this.bullets);
-    this.bullets = this.bullets.filter(bullet => !destroyedBullets.includes(bullet.bullet));
+
+    if (destroyedBullets.length > 0) {
+      destroyedBullets.forEach(destroyed => {
+        const ind = this.bullets.findIndex(bullet => bullet.id === destroyed.bullet.id);
+        this.bullets.splice(ind,1);
+      });
+    }
 
     // Check if any mfers are freshly dead, and sweep floor
     Object.keys(this.sockets).forEach(playerID => {
@@ -115,8 +121,8 @@ class Game {
     // Check if we need another AidKit
     if (this.aidkits.length < max_aid_kits) {
 
-      const x = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);
-      const y = Math.random()*(Constants.MAP_SIZE-Constants.AID_KIT_RADIUS);
+      const x = 0.5*Constants.AID_KIT_WIDTH + Math.random()*(Constants.MAP_SIZE-0.5*Constants.AID_KIT_WIDTH);
+      const y = 0.5*Constants.AID_KIT_WIDTH + Math.random()*(Constants.MAP_SIZE-0.5*Constants.AID_KIT_WIDTH);
 
       const hp = Constants.PLAYER_MAX_HP;
       const t0 = now + 2000*(Math.random() + 5*Math.random());

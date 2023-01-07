@@ -14,7 +14,7 @@ function applyBullets(players, bullets) {
 
       if (
         bullet.parentID !== player.id &&
-        player.distanceTo(bullet) <= Constants.PLAYER_RADIUS + Constants.BULLET_RADIUS
+        player.distanceTo(bullet) <= Constants.PLAYER_RADIUS + 0.5*Constants.BULLET_RADIUS
       ) {
         destroyedBullets.push({
           bullet,
@@ -39,7 +39,7 @@ function applyAidKits(players, aidkits) {
       if (player.color === "dead") {continue;}
       
       if (
-        player.distanceTo(aidkit) <= Constants.PLAYER_RADIUS + Constants.AID_KIT_RADIUS
+        player.distanceTo(aidkit) <= Constants.PLAYER_RADIUS + 0.5*Constants.AID_KIT_WIDTH
       ) {
         usedAidKits.push(aidkit);
         player.useAidKit(aidkit);

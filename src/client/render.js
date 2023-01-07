@@ -190,10 +190,10 @@ function renderAidKit(me,aidkit) {
   if (img['loaded']) {
     context.drawImage(
       img['src'],
-      0.5*dim.sw + x - me.x,
-      0.5*dim.sh + y - me.y,
-      Constants.AID_KIT_RADIUS,
-      Constants.AID_KIT_RADIUS
+      0.5*dim.sw + x - me.x - 0.5*Constants.AID_KIT_WIDTH,
+      0.5*dim.sh + y - me.y - 0.5*Constants.AID_KIT_WIDTH,
+      Constants.AID_KIT_WIDTH,
+      Constants.AID_KIT_WIDTH
     );
   }
 }
